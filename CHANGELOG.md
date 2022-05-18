@@ -6,3 +6,8 @@
 
 * Rendering 3d earth with locating custom widgets on it.
 
+## 0.0.3
+
+* Update sdk version
+
+
