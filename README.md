@@ -38,7 +38,7 @@ An iOS plugin to render 3d models in SceneKit iOS.
 
 ## 📷 Screenshots
 
-| iOS | <img height="414" src="[https://github.com/take2make/scenekit_plugin/example/screenshots/earth_with_widgets.gif](https://github.com/take2make/scenekit_plugin/blob/main/example/screenshots/earth_with_widgets.gif)">
+| iOS | <img height="414" src="https://github.com/take2make/scenekit_plugin/blob/main/example/screenshots/earth_with_widgets.gif">
 
 ## ❓ Usage
 
