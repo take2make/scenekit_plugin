@@ -66,3 +66,45 @@ An iOS plugin to render 3d models in SceneKit iOS.
     )
 ```
 
+* Place Widgets on the Earth
+
+```dart
+    scenekitController.addWidgetToEarth(models: [
+            ScenekitWidgetModel(
+                lat: 80,
+                long: 5,
+                name: "widgetNode1",
+                assetName: 'assets/eagle.png',
+                hexColor: 0x7FFF00,
+                onWidgetTap: () async {
+                    await HapticFeedback.lightImpact();
+                    print("navigate to widgetNode1 !");
+                },
+            ),
+            ScenekitWidgetModel(
+                lat: 43,
+                long: -85,
+                name: "widgetNode2",
+                assetName: 'assets/eagle.png',
+                hexColor: 0x7FFF00,
+                onWidgetTap: () async {
+                    await HapticFeedback.lightImpact();
+                    print("navigate to widgetNode2 !");
+                },
+            ),
+            ScenekitWidgetModel(
+                lat: -19,
+                long: 47,
+                name: "widgetNode3",
+                assetName: 'assets/eagle.png',
+                hexColor: 0x7FFF00,
+                onWidgetTap: () async {
+                    await HapticFeedback.lightImpact();
+                    print("navigate to widgetNode3 !");
+                },
+            ),
+        ],
+    )
+```
+
+
