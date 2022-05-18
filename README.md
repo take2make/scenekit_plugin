@@ -1,20 +1,5 @@
 # scenekit_plugin
 
-Scenekit plugin allows you to render custom 3d models by using scenekit API in Flutter.
-
-At the moment rootNode is the EarthNode, it means that all other nodes will be located
-regarding it. 
-
-Main gestures are transfered from the Flutter side to the Native side. Flutter catch the tap gesture
-and allow to manipulate with widgets in the scene. As an example to this is WidgetNode.
-
-WidgetNode can be modified:
-1. Color (hex int format)
-2. Image (send image in the base64 format from Flutter to Swift)
-3. Location on the Earth (Latitude and Longitude)
-
-# scenekit_plugin
-
 An iOS plugin to render 3d models in SceneKit iOS.
 
 ## Table of contents
@@ -41,4 +26,43 @@ An iOS plugin to render 3d models in SceneKit iOS.
 | iOS | <img height="414" src="https://github.com/take2make/scenekit_plugin/blob/main/example/screenshots/earth_with_widgets.gif">
 
 ## ❓ Usage
+
+* Init scenekit view
+
+```dart
+
+    late ScenekitController scenekitController;
+
+    ScenekitView(
+        onScenekitViewCreated: onScenekitViewCreated,
+    ),
+
+    void onScenekitViewCreated(ScenekitController scenekitController) {
+        this.scenekitController = scenekitController;
+    }
+```
+
+* Place Earth in the scene
+
+```dart
+    scenekitController.addWidgetToScene();
+```
+
+* Place Widget on the Earth
+
+```dart
+    scenekitController.addWidgetToEarth(model:
+        ScenekitWidgetModel(
+            lat: 80,
+            long: 5,
+            name: "widgetNode1",
+            assetName: 'assets/eagle.png',
+            hexColor: 0x7FFF00,
+            onWidgetTap: () async {
+                await HapticFeedback.lightImpact();
+                print("navigate to widgetNode1 !");
+            },
+        ),
+    )
+```
 
