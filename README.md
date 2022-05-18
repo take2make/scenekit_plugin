@@ -69,7 +69,7 @@ An iOS plugin to render 3d models in SceneKit iOS.
 * Place Widgets on the Earth
 
 ```dart
-    scenekitController.addWidgetToEarth(models: [
+    scenekitController.addWidgetsToEarth(models: [
             ScenekitWidgetModel(
                 lat: 80,
                 long: 5,
