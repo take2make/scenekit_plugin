@@ -66,10 +66,12 @@ class ScenekitController {
       "x": x,
       "y": y,
     });
-    final widgetModel = widgetModels.firstWhere(
-      (element) => element.name == result,
-    );
-    if (widgetModel.onWidgetTap != null) widgetModel.onWidgetTap!();
+    if (result != null) {
+      final widgetModel = widgetModels.firstWhere(
+        (element) => element.name == result,
+      );
+      if (widgetModel.onWidgetTap != null) widgetModel.onWidgetTap!();
+    }
     return result;
   }
 
