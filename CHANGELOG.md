@@ -1,3 +1,3 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Rendering 3d earth with locating custom widgets on it.
