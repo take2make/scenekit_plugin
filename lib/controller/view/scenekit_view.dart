@@ -12,10 +12,10 @@ typedef ScenekitPluginCreatedCallback = void Function(
 class ScenekitView extends StatefulWidget {
   final Function(String)? onNodeTap;
   const ScenekitView({
-    super.key,
+    Key? key,
     this.onNodeTap,
     required this.onScenekitViewCreated,
-  });
+  }) : super(key: key);
 
   final ScenekitPluginCreatedCallback onScenekitViewCreated;
 
