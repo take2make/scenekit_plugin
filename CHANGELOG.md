@@ -10,4 +10,8 @@
 
 * Update sdk version
 
+## 0.0.4
+
+* Update minimum iOS version to 12
+
 
