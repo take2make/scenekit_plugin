@@ -12,6 +12,7 @@ WidgetNode can be modified:
 1. Color (hex int format)
 2. Image (send image in the base64 format from Flutter to Swift)
 3. Location on the Earth (Latitude and Longitude)
+4. 
 
 # flutter_local_notifications
 
