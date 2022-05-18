@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - scenekit_plugin (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - scenekit_plugin (from `.symlinks/plugins/scenekit_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  scenekit_plugin:
+    :path: ".symlinks/plugins/scenekit_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 405776dd0763d7e32a8f989d4e271ca1317d080c
+  scenekit_plugin: f828c5f472fa8e47c76b668f8ec61d6b1d4536f3
+
+PODFILE CHECKSUM: 4e8f8b2be68aeea4c0d5beb6ff1e79fface1d048
+
+COCOAPODS: 1.11.2
