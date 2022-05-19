@@ -14,4 +14,14 @@
 
 * Update minimum iOS version to 12
 
+## 0.0.5
+
+* Add parameters to addEarthToScene:
+    initialScale
+    backgroundHexColor
+
+* rename addWidgetToScene to addEarthToScene
+
+* add parameter to ingore user taps on earth:
+    isAllowedToInteract
 

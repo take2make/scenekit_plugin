@@ -34,7 +34,10 @@ class _ScenekitPageState extends State<ScenekitPage> {
           CupertinoButton(
             child: const Icon(Icons.public_sharp, color: Colors.white),
             onPressed: () async {
-              await scenekitController.addWidgetToScene();
+              await scenekitController.addEarthToScene(
+                initialScale: 1.5,
+                backgroundHexColor: 0xff1E3968,
+              );
             },
           ),
           CupertinoButton(
@@ -44,9 +47,8 @@ class _ScenekitPageState extends State<ScenekitPage> {
                 ScenekitWidgetModel(
                   lat: 80,
                   long: 5,
-                  name: "widgetNode1",
                   assetName: 'assets/eagle.png',
-                  hexColor: 0x7FFF00,
+                  hexColor: 0xFFBCD9A5,
                   onWidgetTap: () async {
                     await HapticFeedback.lightImpact();
                     print("navigate to widgetNode1 !");
@@ -55,9 +57,8 @@ class _ScenekitPageState extends State<ScenekitPage> {
                 ScenekitWidgetModel(
                   lat: 43,
                   long: -85,
-                  name: "widgetNode2",
                   assetName: 'assets/eagle.png',
-                  hexColor: 0x7FFF00,
+                  hexColor: 0xFFBCD9A5,
                   onWidgetTap: () async {
                     await HapticFeedback.lightImpact();
                     print("navigate to widgetNode2 !");
@@ -66,9 +67,8 @@ class _ScenekitPageState extends State<ScenekitPage> {
                 ScenekitWidgetModel(
                   lat: -19,
                   long: 47,
-                  name: "widgetNode3",
                   assetName: 'assets/eagle.png',
-                  hexColor: 0x7FFF00,
+                  hexColor: 0xFFBCD9A5,
                   onWidgetTap: () async {
                     await HapticFeedback.lightImpact();
                     print("navigate to widgetNode3 !");
@@ -94,13 +94,50 @@ class _ScenekitPageState extends State<ScenekitPage> {
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: ScenekitView(
+        isAllowedToInteract: true,
         onScenekitViewCreated: onScenekitViewCreated,
       ),
     );
   }
 
-  void onScenekitViewCreated(ScenekitController scenekitController) {
+  void onScenekitViewCreated(ScenekitController scenekitController) async {
     this.scenekitController = scenekitController;
+    await scenekitController.addEarthToScene(
+      initialScale: 1.5,
+      backgroundHexColor: 0xff1E3968,
+    );
+    await scenekitController.addWidgetsToEarth(models: [
+      ScenekitWidgetModel(
+        lat: 80,
+        long: 5,
+        assetName: 'assets/eagle.png',
+        hexColor: 0xFFBCD9A5,
+        onWidgetTap: () async {
+          await HapticFeedback.lightImpact();
+          print("navigate to widgetNode1 !");
+        },
+      ),
+      ScenekitWidgetModel(
+        lat: 43,
+        long: -85,
+        assetName: 'assets/eagle.png',
+        hexColor: 0xFFBCD9A5,
+        onWidgetTap: () async {
+          await HapticFeedback.lightImpact();
+          print("navigate to widgetNode2 !");
+        },
+      ),
+      ScenekitWidgetModel(
+        lat: -19,
+        long: 47,
+        assetName: 'assets/eagle.png',
+        hexColor: 0xFFBCD9A5,
+        onWidgetTap: () async {
+          await HapticFeedback.lightImpact();
+          print("navigate to widgetNode3 !");
+        },
+      ),
+    ]);
   }
 
   @override

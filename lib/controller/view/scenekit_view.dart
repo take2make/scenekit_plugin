@@ -13,10 +13,12 @@ class ScenekitView extends StatefulWidget {
   final Function(String)? onNodeTap;
   const ScenekitView({
     Key? key,
+    this.isAllowedToInteract,
     this.onNodeTap,
     required this.onScenekitViewCreated,
   }) : super(key: key);
 
+  final bool? isAllowedToInteract;
   final ScenekitPluginCreatedCallback onScenekitViewCreated;
 
   @override
@@ -40,9 +42,14 @@ class _ScenekitViewState extends State<ScenekitView> {
           }
         },
         child: UiKitView(
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          hitTestBehavior:
+              widget.isAllowedToInteract != null && widget.isAllowedToInteract!
+                  ? PlatformViewHitTestBehavior.opaque
+                  : PlatformViewHitTestBehavior.transparent,
           viewType: 'scenekit',
-          onPlatformViewCreated: onPlatformViewCreated,
+          onPlatformViewCreated: (index) {
+            onPlatformViewCreated(index);
+          },
           creationParamsCodec: const StandardMessageCodec(),
         ),
       );

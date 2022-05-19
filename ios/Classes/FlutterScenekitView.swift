@@ -36,7 +36,19 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             let resTap = handleTap(point: Point.initFromParameters(params: arguments!))
             result(resTap)
             break
-        case "add_widget_to_scene":
+        case "add_earth_to_scene":
+            if let initialScale = arguments!["initialScale"] as? Double {
+                print("initialScale = \(initialScale)")
+                sceneView.pointOfView?.camera?.orthographicScale = initialScale
+            } else {
+                sceneView.pointOfView?.camera?.orthographicScale = 4
+            }
+            if let backgroundHexColor = arguments!["backgroundHexColor"] as? Int {
+                sceneView.scene!.background.contents = UIColor.init(rgb: backgroundHexColor)
+            } else {
+                sceneView.scene!.background.contents = UIColor.clear
+            }
+            
             let earthNode = EarthNode()
             self.parentNode = earthNode
             self.sceneView.scene!.rootNode.addChildNode(earthNode)
@@ -68,8 +80,6 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
 
     func initalize(_ arguments: Dictionary<String, Any>, _ result:FlutterResult) {
         let scene = SCNScene()
-        scene.background.contents = UIColor.clear
-        
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         cameraNode.position = SCNVector3(x:0, y: 0, z: 10)
@@ -93,7 +103,6 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         sceneView.defaultCameraController.minimumVerticalAngle = -45
         sceneView.allowsCameraControl = true
         sceneView.pointOfView?.camera?.usesOrthographicProjection = true
-        sceneView.pointOfView?.camera?.orthographicScale = 4
         sceneView.cameraControlConfiguration.rotationSensitivity = 0.4
     }
     
@@ -112,8 +121,6 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         scene.rootNode.enumerateChildNodes { (node, stop) in
             if ( (node.name?.localizedStandardContains("widgetNode")) != nil &&  (node.name?.localizedStandardContains("widgetNode"))! ) {
                 let floatScale = Float(currentOrthographicScale!)
-                let normalizedScale = floatScale - 4
-                print("scale = \(normalizedScale)")
                 
                 //node.position = SCNVector3(node.position.x, node.position.y,node.position.z)
                 node.scale = SCNVector3(floatScale,floatScale,floatScale)

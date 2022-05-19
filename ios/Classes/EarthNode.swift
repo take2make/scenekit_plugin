@@ -2,11 +2,10 @@ import UIKit
 import SceneKit
 
 class EarthNode: SCNNode {
-
+    
     override init() {
         super.init()
         self.geometry = SCNSphere(radius: 1)
-
         
         //print(" latitude \(self.geometry?.emissionLatitude)")
         

@@ -5,9 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:scenekit_plugin/controller/model/scenekit_widget_model.dart';
 
 class ScenekitController {
-  ScenekitController.init({
-    required this.id,
-  }) {
+  ScenekitController.init({required this.id}) {
     _channel = MethodChannel('scenekit_$id');
     _channel.invokeMethod<void>('init', {
       "showStatistics": false,
@@ -22,8 +20,14 @@ class ScenekitController {
     await _channel.invokeMethod("dispose");
   }
 
-  Future<void> addWidgetToScene() async {
-    await _channel.invokeMethod("add_widget_to_scene");
+  Future<void> addEarthToScene({
+    double? initialScale,
+    int? backgroundHexColor,
+  }) async {
+    await _channel.invokeMethod("add_earth_to_scene", {
+      "initialScale": initialScale,
+      "backgroundHexColor": backgroundHexColor,
+    });
   }
 
   Future<void> addWidgetToEarth({required ScenekitWidgetModel model}) async {
@@ -42,14 +46,15 @@ class ScenekitController {
       {required List<ScenekitWidgetModel> models}) async {
     widgetModels = models;
     List<Map<String, Object?>> widgetsListMap = [];
-    for (final model in models) {
+    for (int i = 0; i < models.length; i++) {
+      models[i].setWidgetName = "widgetNode$i";
       widgetsListMap.add({
-        "latitude": model.lat,
-        "longitude": model.long,
-        "widgetName": model.name,
-        "hexColor": model.hexColor,
-        "imageData": model.assetName != null
-            ? await convertImageToBase64(assetName: model.assetName!)
+        "latitude": models[i].lat,
+        "longitude": models[i].long,
+        "widgetName": models[i].name,
+        "hexColor": models[i].hexColor,
+        "imageData": models[i].assetName != null
+            ? await convertImageToBase64(assetName: models[i].assetName!)
             : "",
       });
     }
