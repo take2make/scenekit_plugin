@@ -105,6 +105,7 @@ class _ScenekitPageState extends State<ScenekitPage> {
     await scenekitController.addEarthToScene(
       initialScale: 1.5,
       backgroundHexColor: 0xff1E3968,
+      y: -0.5,
     );
     await scenekitController.addWidgetsToEarth(models: [
       ScenekitWidgetModel(

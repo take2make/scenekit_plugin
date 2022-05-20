@@ -23,10 +23,16 @@ class ScenekitController {
   Future<void> addEarthToScene({
     double? initialScale,
     int? backgroundHexColor,
+    double? x,
+    double? y,
+    double? z,
   }) async {
     await _channel.invokeMethod("add_earth_to_scene", {
       "initialScale": initialScale,
       "backgroundHexColor": backgroundHexColor,
+      "x": x ?? 0,
+      "y": y ?? 0,
+      "z": z ?? 0,
     });
   }
 

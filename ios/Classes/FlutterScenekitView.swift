@@ -51,6 +51,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             
             let earthNode = EarthNode()
             self.parentNode = earthNode
+            self.parentNode?.position = SCNVector3((arguments!["x"] as? Double)!, (arguments!["y"] as? Double)!,(arguments!["z"] as? Double)!)
             self.sceneView.scene!.rootNode.addChildNode(earthNode)
             result(nil)
             break

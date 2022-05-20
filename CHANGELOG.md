@@ -25,3 +25,8 @@
 * add parameter to ingore user taps on earth:
     isAllowedToInteract
 
+## 0.0.6
+
+* Add posibility to change Earth Position in the scene by
+    input x, y, z
+
