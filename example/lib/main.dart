@@ -81,7 +81,7 @@ class _ScenekitPageState extends State<ScenekitPage> {
             child: const Icon(Icons.display_settings_outlined,
                 color: Colors.white),
             onPressed: () async {
-              await scenekitController.dispose();
+              await scenekitController.removeWidgets();
             },
           ),
         ]),
