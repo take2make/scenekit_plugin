@@ -30,3 +30,7 @@
 * Add posibility to change Earth Position in the scene by
     input x, y, z
 
+## 0.0.7
+
+* update scenekit controller - remove widgets from the earth
+

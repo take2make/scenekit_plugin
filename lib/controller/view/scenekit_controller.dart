@@ -20,6 +20,10 @@ class ScenekitController {
     await _channel.invokeMethod("dispose");
   }
 
+  Future<void> removeWidgets() async {
+    await _channel.invokeMethod("remove_widgets");
+  }
+
   Future<void> addEarthToScene({
     double? initialScale,
     int? backgroundHexColor,

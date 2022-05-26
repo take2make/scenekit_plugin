@@ -32,6 +32,10 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             onDispose(result)
             result(nil)
             break
+        case "remove_widgets":
+            onRemoveWidgets(result)
+            result(nil)
+            break
         case "handle_tap":
             let resTap = handleTap(point: Point.initFromParameters(params: arguments!))
             result(resTap)
@@ -190,6 +194,16 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         scene.rootNode.addChildNode(lightNode6)
 
     }
+    
+    func onRemoveWidgets(_ result:FlutterResult) {
+        sceneView.scene!.rootNode.enumerateChildNodes { (node, stop) in
+            if ( (node.name?.localizedStandardContains("widgetNode")) != nil &&  (node.name?.localizedStandardContains("widgetNode"))! ) {
+                node.removeFromParentNode()
+            }
+        }
+        result(nil)
+    }
+    
 
     func onDispose(_ result:FlutterResult) {
         sceneView.isPlaying = false
