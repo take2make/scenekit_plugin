@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- color int as #AARRGGBB (alpha, red, green, blue) -->
+    <color name="orange">#fff3632b</color>
+    <color name="my_view_color">@color/orange</color>
+
+</resources>

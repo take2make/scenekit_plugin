@@ -7,14 +7,19 @@ import 'package:scenekit_plugin/controller/model/scenekit_widget_model.dart';
 class ScenekitController {
   ScenekitController.init({required this.id}) {
     _channel = MethodChannel('scenekit_$id');
-    _channel.invokeMethod<void>('init', {
+    /*_channel.invokeMethod<void>('init', {
       "showStatistics": false,
-    });
+    });*/
   }
 
   late MethodChannel _channel;
   final int id;
   late List<ScenekitWidgetModel> widgetModels;
+
+  Future<String?> getPlatformVersion() async {
+    final version = await _channel.invokeMethod<String>('checkConfiguration');
+    return version;
+  }
 
   Future<void> dispose() async {
     await _channel.invokeMethod("dispose");

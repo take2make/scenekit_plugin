@@ -55,7 +55,13 @@ class _ScenekitViewState extends State<ScenekitView> {
       );
     }
 
-    return Text('$defaultTargetPlatform is not supported by this plugin');
+    return AndroidView(
+      viewType: "scenekit",
+      onPlatformViewCreated: (index) {
+        onPlatformViewCreated(index);
+      },
+      creationParamsCodec: const StandardMessageCodec(),
+    );
   }
 
   Future<void> onPlatformViewCreated(int id) async {
