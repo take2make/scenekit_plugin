@@ -102,6 +102,9 @@ class _ScenekitPageState extends State<ScenekitPage> {
 
   void onScenekitViewCreated(ScenekitController scenekitController) async {
     this.scenekitController = scenekitController;
+    final version = await scenekitController.getPlatformVersion();
+    print(version);
+    /*this.scenekitController = scenekitController;
     await scenekitController.addEarthToScene(
       initialScale: 1.5,
       backgroundHexColor: 0xff1E3968,
@@ -138,7 +141,7 @@ class _ScenekitPageState extends State<ScenekitPage> {
           print("navigate to widgetNode3 !");
         },
       ),
-    ]);
+    ]);*/
   }
 
   @override
