@@ -6,11 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:scenekit_plugin/controller/view/scenekit_controller.dart';
 
 typedef ScenekitPluginCreatedCallback = void Function(
-  ScenekitController controller,
-);
+    ScenekitController controller,
+    );
 
 class ScenekitView extends StatefulWidget {
   final Function(String)? onNodeTap;
+
   const ScenekitView({
     Key? key,
     this.isAllowedToInteract,
@@ -43,19 +44,41 @@ class _ScenekitViewState extends State<ScenekitView> {
         },
         child: UiKitView(
           hitTestBehavior:
-              widget.isAllowedToInteract != null && widget.isAllowedToInteract!
-                  ? PlatformViewHitTestBehavior.opaque
-                  : PlatformViewHitTestBehavior.transparent,
-          viewType: 'scenekit',
+          widget.isAllowedToInteract != null && widget.isAllowedToInteract!
+              ? PlatformViewHitTestBehavior.opaque
+              : PlatformViewHitTestBehavior.transparent,
+          viewType: "scenekit",
           onPlatformViewCreated: (index) {
             onPlatformViewCreated(index);
           },
           creationParamsCodec: const StandardMessageCodec(),
         ),
       );
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      return PlatformViewLink(
+        viewType: "scenekit",
+        surfaceFactory: (context, controller) {
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            hitTestBehavior: widget.isAllowedToInteract != null && widget.isAllowedToInteract!
+                ? PlatformViewHitTestBehavior.opaque
+                : PlatformViewHitTestBehavior.transparent,
+            gestureRecognizers: const {},
+          );
+        },
+        onCreatePlatformView: (params) {
+          return PlatformViewsService.initExpensiveAndroidView(
+            id: params.id,
+            viewType: "scenekit",
+            layoutDirection: TextDirection.ltr,
+            creationParamsCodec: const StandardMessageCodec(),
+          )
+            ..addOnPlatformViewCreatedListener(onPlatformViewCreated)
+            ..create();
+        },
+      );
     }
-
-    return Text('$defaultTargetPlatform is not supported by this plugin');
+    return Container();
   }
 
   Future<void> onPlatformViewCreated(int id) async {

@@ -1,12 +1,24 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:scenekit_plugin/controller/model/scenekit_widget_model.dart';
 
 class ScenekitController {
   ScenekitController.init({required this.id}) {
     _channel = MethodChannel('scenekit_$id');
+    _channel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case "widget_tap":
+          {
+            final key = call.arguments;
+            _callTapCallback(key);
+            break;
+          }
+      }
+      return;
+    });
     _channel.invokeMethod<void>('init', {
       "showStatistics": false,
     });
@@ -15,6 +27,11 @@ class ScenekitController {
   late MethodChannel _channel;
   final int id;
   late List<ScenekitWidgetModel> widgetModels;
+
+  Future<String?> getPlatformVersion() async {
+    final version = await _channel.invokeMethod<String>('checkConfiguration');
+    return version;
+  }
 
   Future<void> dispose() async {
     await _channel.invokeMethod("dispose");
@@ -26,43 +43,29 @@ class ScenekitController {
 
   Future<void> addEarthToScene({
     double? initialScale,
-    int? backgroundHexColor,
+    int? backgroundColor,
     double? x,
     double? y,
     double? z,
   }) async {
     await _channel.invokeMethod("add_earth_to_scene", {
       "initialScale": initialScale,
-      "backgroundHexColor": backgroundHexColor,
+      if (backgroundColor != null) "backgroundColor": backgroundColor.toInt(),
       "x": x ?? 0,
       "y": y ?? 0,
       "z": z ?? 0,
     });
   }
 
-  Future<void> addWidgetToEarth({required ScenekitWidgetModel model}) async {
-    await _channel.invokeMethod("add_widget_to_earth", {
-      "latitude": model.lat,
-      "longitude": model.long,
-      "widgetName": model.name,
-      "hexColor": model.hexColor,
-      "imageData": model.assetName != null
-          ? await convertImageToBase64(assetName: model.assetName!)
-          : null,
-    });
-  }
-
-  Future<void> addWidgetsToEarth(
-      {required List<ScenekitWidgetModel> models}) async {
+  Future<void> setWidgetsToEarth({required List<ScenekitWidgetModel> models}) async {
     widgetModels = models;
     List<Map<String, Object?>> widgetsListMap = [];
     for (int i = 0; i < models.length; i++) {
-      models[i].setWidgetName = "widgetNode$i";
       widgetsListMap.add({
+        "key": models[i].key,
         "latitude": models[i].lat,
         "longitude": models[i].long,
-        "widgetName": models[i].name,
-        "hexColor": models[i].hexColor,
+        "color": models[i].color,
         "imageData": models[i].assetName != null
             ? await convertImageToBase64(assetName: models[i].assetName!)
             : "",
@@ -82,10 +85,7 @@ class ScenekitController {
       "y": y,
     });
     if (result != null) {
-      final widgetModel = widgetModels.firstWhere(
-        (element) => element.name == result,
-      );
-      if (widgetModel.onWidgetTap != null) widgetModel.onWidgetTap!();
+      _callTapCallback(result);
     }
     return result;
   }
@@ -95,5 +95,12 @@ class ScenekitController {
     var buffer = bytes.buffer;
     var encodedString = base64.encode(Uint8List.view(buffer));
     return encodedString;
+  }
+
+  void _callTapCallback(String key) {
+    final widgetModel = widgetModels.firstWhereOrNull(
+      (element) => element.key == key,
+    );
+    widgetModel?.onWidgetTap?.call();
   }
 }

@@ -5,10 +5,10 @@ class WidgetNode: SCNNode {
     var color: UIColor = UIColor.red
 
     func initFromParameters(params: Dictionary<String, Any>) {
-        if (params["hexColor"] != nil) {
-            self.color = UIColor.init(rgb: (params["hexColor"] as? Int)!)
+        if (params["color"] != nil) {
+            self.color = UIColor.init(rgb: (params["color"] as? Int)!)
         }
-        self.name = (params["widgetName"] as? String)!
+        self.name = (params["key"] as? String)!
     }
 
     init(params: Dictionary<String, Any>) {

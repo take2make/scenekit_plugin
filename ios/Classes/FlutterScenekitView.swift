@@ -47,7 +47,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             } else {
                 sceneView.pointOfView?.camera?.orthographicScale = 4
             }
-            if let backgroundHexColor = arguments!["backgroundHexColor"] as? Int {
+            if let backgroundHexColor = arguments!["backgroundColor"] as? Int {
                 sceneView.scene!.background.contents = UIColor.init(rgb: backgroundHexColor)
             } else {
                 sceneView.scene!.background.contents = UIColor.clear
@@ -68,6 +68,9 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             addNodeToAnotherNode(parentNode: self.parentNode!, childNode: widgetNode, coord: Coord.initFromParameters(params: arguments!))
             addSymmetricNode(parentNode: self.parentNode!, childNode: EmptyWidgetNode(), coord: Coord.initFromParameters(params: arguments!))
             result(nil)
+            break
+        case "checkConfiguration":
+            result("ok")
             break
         default:
             result(FlutterMethodNotImplemented)
@@ -152,7 +155,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
 
         childNode.position = SCNVector3(-radius*cos(coord.latitude/180*pi)*sin(coord.longitude/180*pi),-radius*sin(coord.latitude/180*pi), -radius*cos(coord.latitude/180*pi)*cos(coord.longitude/180*pi));
         childNode.constraints = [billboardConstraint]
-        parentNode.addChildNode(childNode)
+       parentNode.addChildNode(childNode)
     }
 
     func addUniformLight(scene: SCNScene) {

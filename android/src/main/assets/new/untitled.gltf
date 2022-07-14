@@ -1,0 +1,166 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.2.40",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                2
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Earth.001"
+        },
+        {
+            "children" : [
+                0
+            ],
+            "name" : "Earth"
+        },
+        {
+            "children" : [
+                1
+            ],
+            "name" : "root"
+        }
+    ],
+    "materials" : [
+        {
+            "name" : "Earth_Mat",
+            "normalTexture" : {
+                "index" : 0
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 1
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 2
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Earth",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "sampler" : 0,
+            "source" : 0
+        },
+        {
+            "sampler" : 0,
+            "source" : 1
+        },
+        {
+            "sampler" : 0,
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Earth_Mat_normal",
+            "uri" : "Earth_Mat_normal.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Earth_Mat_baseColor",
+            "uri" : "Earth_Mat_baseColor.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Earth_Mat_occlusionRoughnessMetallic",
+            "uri" : "Earth_Mat_occlusionRoughnessMetallic.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 2667,
+            "max" : [
+                0.9302325248718262,
+                0.9302325248718262,
+                0.9302324652671814
+            ],
+            "min" : [
+                -0.9302324056625366,
+                -0.9302325248718262,
+                -0.9302322864532471
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 2667,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 2667,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 15744,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 32004,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 32004,
+            "byteOffset" : 32004
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 21336,
+            "byteOffset" : 64008
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 31488,
+            "byteOffset" : 85344
+        }
+    ],
+    "samplers" : [
+        {
+            "magFilter" : 9729,
+            "minFilter" : 9987
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 116832,
+            "uri" : "untitled.bin"
+        }
+    ]
+}
