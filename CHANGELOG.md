@@ -34,3 +34,7 @@
 
 * update scenekit controller - remove widgets from the earth
 
+## 0.0.8
+
+* add android implementation
+

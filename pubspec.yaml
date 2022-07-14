@@ -1,17 +1,17 @@
 name: scenekit_plugin
-description: Flutter Plugin for SceneKit - Apple's 3d renderer development platform for iOS mobile devices.
-version: 0.0.7
+description: Flutter Plugin for SceneKit - 3d renderer development platform for iOS and Android mobile devices.
+version: 0.0.8
 repository: https://github.com/take2make/scenekit_plugin
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
-  flutter: '>=2.5.0 <3.0.0'
+  flutter: '>=2.5.0'
 
 dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.1.2
-  collection: any
+  collection: ^1.16.0
 
 dev_dependencies:
   flutter_test:
