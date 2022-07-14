@@ -8,6 +8,6 @@ class Coord {
     }
 
     static func initFromParameters(params: Dictionary<String, Any>) -> Coord{
-        return Coord(lat: (params["latitude"] as? Float)!, long: (params["longitude"] as? Float)!)
+        return Coord(lat: Float(params["latitude"] as! Double), long: Float(params["longitude"] as! Double))
     }
 }

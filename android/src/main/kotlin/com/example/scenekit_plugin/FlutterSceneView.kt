@@ -1,89 +1,165 @@
 package com.example.scenekit_plugin
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.ActivityManager
 import android.content.Context
-import android.graphics.Color
-import android.os.Build
-import android.os.Build.VERSION_CODES
-import android.os.Handler
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import com.google.ar.core.*
-import com.google.ar.sceneform.*
+import com.google.ar.sceneform.SceneView
 import com.google.ar.sceneform.math.Vector3
-import com.google.ar.sceneform.rendering.Material
-import com.google.ar.sceneform.rendering.MaterialFactory
-import com.google.ar.sceneform.rendering.Renderable
-import com.google.ar.sceneform.rendering.ShapeFactory
+import com.google.ar.sceneform.ux.FootprintSelectionVisualizer
+import com.google.ar.sceneform.ux.TransformationSystem
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 
 
-@SuppressLint("SetTextI18n")
-@RequiresApi(VERSION_CODES.O)
-internal class FlutterSceneView(val activity: Activity, context: Context?, messenger: BinaryMessenger, id: Int, creationParams: Map<String?, Any?>?) : PlatformView,MethodChannel.MethodCallHandler {
+internal class FlutterSceneView(
+    private val context: Context,
+    messenger: BinaryMessenger,
+    id: Int,
+) : PlatformView, MethodChannel.MethodCallHandler {
     private val sceneView: SceneView
-    //private val textView: TextView
     private val methodChannel: MethodChannel = MethodChannel(messenger, "scenekit_$id")
-
-    override fun getView(): View {
-        return sceneView
-    }
-
-    override fun dispose() {}
-
-    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        when (call.method) {
-            "checkConfiguration" -> {
-                result.success("1")
-            }
-            else -> {
-                result.notImplemented()
-            }
-        }
-    }
-
-
-    private fun addOnTapHandler(parentNode: Node, context: Context?) {
-        parentNode.setOnTapListener { hitTestResult: HitTestResult, motionEvent: MotionEvent? ->
-            Log.d("TAG", "addOnTapHandler: " + hitTestResult.point)
-            val color =
-                com.google.ar.sceneform.rendering.Color(Color.parseColor("#FF7390"))
-            MaterialFactory.makeOpaqueWithColor(context, color)
-                .thenAccept { material: Material? ->
-                    val sphere: Renderable =
-                        ShapeFactory.makeSphere(0.05f, Vector3.zero(), material)
-                    val node = Node()
-                    node.setParent(hitTestResult.node)
-                    node.localPosition = hitTestResult.point
-                    node.renderable = sphere
-                }
-        }
-    }
+    private val transformationSystem by lazy { makeTransformationSystem() }
+    private var earthNode: EarthNode? = null
 
     init {
         methodChannel.setMethodCallHandler(this)
 
         sceneView = SceneView(context)
-        sceneView.layoutParams.width = 200
-        sceneView.setBackgroundColor(R.color.orange.toInt())
-        val scene = sceneView.getScene()
-        val parentNode = Node()
-        scene.addChild(parentNode)
-        addOnTapHandler(parentNode, context)
+        sceneView.resume() // TODO handle lifecycle
+        val scene = sceneView.scene
+        scene.sunlight?.isEnabled = false
+        val widgetTapDetector = WidgetTapDetector(context) { node ->
+            methodChannel.invokeMethod("widget_tap", node.key)
+        }
+        scene.addOnPeekTouchListener { hitTestResult, motionEvent ->
+            scene.hitTestAll(motionEvent).forEach {
+                widgetTapDetector.handleTouchEvent(it, motionEvent)
+            }
+            transformationSystem.onTouch(hitTestResult, motionEvent)
+        }
+    }
 
-        /*textView = TextView(context)
-        textView.textSize = 72f
-        textView.setBackgroundColor(Color.rgb(255, 255, 255))
-        textView.text = "Rendered on a native Android view (id: $id)"
-        */
+
+    override fun getView(): View {
+        return sceneView
+    }
+
+    override fun dispose() {
+        sceneView.destroy()
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "init" -> {
+                result.success(null)
+            }
+            "dispose" -> {
+                sceneView.destroy()
+                result.success(null)
+            }
+            "remove_widgets" -> {
+                earthNode?.children?.reversed()?.forEach { node ->
+                    if (node is WidgetNode) {
+                        node.setParent(null)
+                    }
+                }
+                result.success(null)
+            }
+            "handle_tap" -> {
+                result.success(null)
+            }
+            "add_earth_to_scene" -> {
+                if (earthNode != null) {
+                    return
+                }
+                val backgroundColor = call.argument<Number>("backgroundColor")
+                sceneView.background = if (backgroundColor != null) {
+                    ColorDrawable(backgroundColor.toInt())
+                } else {
+                    ColorDrawable(0xffffff)
+                }
+                val scale = call.argument<Double>("initialScale")?.toFloat() ?: 1f
+
+                val earthNode = EarthNode(context, transformationSystem, scale).apply {
+                    localPosition = Vector3(
+                        call.argument<Double>("x")?.toFloat() ?: 0f,
+                        call.argument<Double>("y")?.toFloat() ?: 0f,
+                        call.argument<Double>("z")?.toFloat() ?: 0f,
+//                        -1f,
+                    )
+                }
+                sceneView.scene.addChild(earthNode)
+                this.earthNode = earthNode
+                result.success(null)
+            }
+            "add_widgets_to_earth" -> {
+                val earthNode = this.earthNode ?: return
+
+                val widgets = call.argument<List<Map<String, Any>>>("widgets")
+                widgets?.forEach { data ->
+                    val key = data["key"] as? String
+                    val latitude = data["latitude"] as? Double
+                    val longitude = data["longitude"] as? Double
+                    if (key != null && latitude != null && longitude != null) {
+                        val color = data["color"] as? Long ?: 0x000000
+                        val imageData = data["imageData"] as? String
+
+                        val correctedLatitude: Double
+                        val correctedLongitude: Double
+                        if (latitude >= 0 && longitude >= 0) {
+                            if (latitude > longitude) {
+                                correctedLatitude = latitude - 10.4f
+                                correctedLongitude = longitude
+                            } else {
+                                correctedLatitude = latitude - 15.5f
+                                correctedLongitude = longitude + 2f
+                            }
+                        } else if (latitude < 0 && longitude < 0) {
+                            correctedLatitude = latitude + 10.4f
+                            correctedLongitude = longitude
+                        } else if (latitude < 0 && longitude >= 0) {
+                            correctedLatitude = latitude + 1.9f
+                            correctedLongitude = longitude + 2f
+                        } else {
+                            correctedLatitude = latitude - 16f
+                            correctedLongitude = longitude
+                        }
+
+                        WidgetNode(context, key, color.toInt(), imageData).apply {
+                            val radius = EarthNode.RADIUS + 0.1f
+                            localPosition = Vector3(
+                                EarthNode.getX(
+                                    radius,
+                                    correctedLatitude,
+                                    correctedLongitude
+                                ),
+                                EarthNode.getY(
+                                    radius,
+                                    correctedLatitude,
+                                    correctedLongitude
+                                ),
+                                EarthNode.getZ(
+                                    radius,
+                                    correctedLatitude,
+                                    correctedLongitude
+                                ),
+                            )
+                            setParent(earthNode)
+                        }
+                    }
+                }
+                result.success(null)
+            }
+            "checkConfiguration" -> result.success("1")
+            else -> result.notImplemented()
+        }
+    }
+
+    private fun makeTransformationSystem(): TransformationSystem {
+        val selectionVisualizer = FootprintSelectionVisualizer()
+        return TransformationSystem(context.resources.displayMetrics, selectionVisualizer)
     }
 }
