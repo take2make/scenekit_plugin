@@ -1,4 +1,5 @@
 import 'dart:convert';
+import "dart:typed_data";
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:scenekit_plugin/controller/model/scenekit_widget_model.dart';

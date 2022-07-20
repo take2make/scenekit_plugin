@@ -45,3 +45,7 @@
 ## 0.0.10
 
 * handle tap events on the native side and after that invoke method: "widget_tap"
+
+## 0.0.11
+
+* add typed_data library
