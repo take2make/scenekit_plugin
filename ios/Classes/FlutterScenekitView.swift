@@ -16,7 +16,18 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         
         self.sceneView.delegate = self
         self.channel.setMethodCallHandler(self.onMethodCalled)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.sceneView.addGestureRecognizer(tapGesture)
     }
+    
+    @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        let point = gestureRecognize.location(in: self.sceneView)
+            let location = CGPoint(x: point.x, y: point.y)
+            let hits = self.sceneView.hitTest(location, options: nil)
+            if let tappedNode = hits.first?.node {
+                self.channel.invokeMethod("widget_tap", arguments: tappedNode.name)
+            }
+        }
     
     func view() -> UIView { return sceneView }
     
@@ -35,10 +46,6 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         case "remove_widgets":
             onRemoveWidgets(result)
             result(nil)
-            break
-        case "handle_tap":
-            let resTap = handleTap(point: Point.initFromParameters(params: arguments!))
-            result(resTap)
             break
         case "add_earth_to_scene":
             if let initialScale = arguments!["initialScale"] as? Double {
@@ -114,14 +121,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
         sceneView.cameraControlConfiguration.rotationSensitivity = 0.4
     }
     
-    func handleTap(point: Point) -> String? {
-        let location = CGPoint(x: point.x, y: point.y)
-        let hits = self.sceneView.hitTest(location, options: nil)
-        if let tappedNode = hits.first?.node {
-            return tappedNode.name
-        }
-        return nil
-    }
+    
 
     
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {

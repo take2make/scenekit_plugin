@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:scenekit_plugin/controller/model/scenekit_widget_model.dart';
@@ -57,7 +55,8 @@ class ScenekitController {
     });
   }
 
-  Future<void> setWidgetsToEarth({required List<ScenekitWidgetModel> models}) async {
+  Future<void> setWidgetsToEarth(
+      {required List<ScenekitWidgetModel> models}) async {
     widgetModels = models;
     List<Map<String, Object?>> widgetsListMap = [];
     for (int i = 0; i < models.length; i++) {
@@ -74,20 +73,6 @@ class ScenekitController {
     await _channel.invokeMethod("add_widgets_to_earth", {
       "widgets": widgetsListMap,
     });
-  }
-
-  Future<String?> handleTap({
-    required double x,
-    required double y,
-  }) async {
-    final result = await _channel.invokeMethod("handle_tap", {
-      "x": x,
-      "y": y,
-    });
-    if (result != null) {
-      _callTapCallback(result);
-    }
-    return result;
   }
 
   Future<String> convertImageToBase64({required String assetName}) async {

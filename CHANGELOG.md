@@ -41,3 +41,7 @@
 ## 0.0.9
 
 * update android
+
+## 0.0.10
+
+* handle tap events on the native side and after that invoke method: "widget_tap"
