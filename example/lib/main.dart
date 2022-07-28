@@ -191,7 +191,8 @@ class _ScenekitPageState extends State<ScenekitPage> {
             },
           ),
           CupertinoButton(
-            child: const Icon(Icons.display_settings_outlined, color: Colors.white),
+            child: const Icon(Icons.display_settings_outlined,
+                color: Colors.white),
             onPressed: () async {
               await scenekitController.removeWidgets();
             },
@@ -225,7 +226,7 @@ class _ScenekitPageState extends State<ScenekitPage> {
 
   @override
   void dispose() {
-    scenekitController.dispose();
+    //scenekitController.dispose();
     super.dispose();
   }
 }

@@ -49,3 +49,7 @@
 ## 0.0.11
 
 * add typed_data library
+
+## 0.0.12
+
+* fix craching on android
