@@ -2,8 +2,9 @@ package com.example.scenekit_plugin
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.View
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.google.ar.sceneform.SceneView
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.ux.FootprintSelectionVisualizer
@@ -18,46 +19,46 @@ internal class FlutterSceneView(
     private val context: Context,
     messenger: BinaryMessenger,
     id: Int,
-) : PlatformView, MethodChannel.MethodCallHandler {
-    private val sceneView: SceneView
+    private val lifecycleProvider: LifecycleProvider
+) : PlatformView, MethodChannel.MethodCallHandler, DefaultLifecycleObserver {
+    private var sceneView: SceneView?
     private val methodChannel: MethodChannel = MethodChannel(messenger, "scenekit_$id")
     private val transformationSystem by lazy { makeTransformationSystem() }
     private var earthNode: EarthNode? = null
 
     init {
         methodChannel.setMethodCallHandler(this)
+        lifecycleProvider.getLifecycle().addObserver(this)
 
         sceneView = SceneView(context)
-        sceneView.resume() // TODO handle lifecycle
-        val scene = sceneView.scene
-        scene.sunlight?.isEnabled = false
-        val widgetTapDetector = WidgetTapDetector(context) { node ->
-            methodChannel.invokeMethod("widget_tap", node.key)
-        }
-        scene.addOnPeekTouchListener { hitTestResult, motionEvent ->
-            scene.hitTestAll(motionEvent).forEach {
-                widgetTapDetector.handleTouchEvent(it, motionEvent)
+        val scene = sceneView?.scene?.apply {
+            sunlight?.isEnabled = false
+            val widgetTapDetector = WidgetTapDetector(context) { node ->
+                methodChannel.invokeMethod("widget_tap", node.key)
             }
-            transformationSystem.onTouch(hitTestResult, motionEvent)
+            addOnPeekTouchListener { hitTestResult, motionEvent ->
+                hitTestAll(motionEvent).forEach {
+                    widgetTapDetector.handleTouchEvent(it, motionEvent)
+                }
+                transformationSystem.onTouch(hitTestResult, motionEvent)
+            }
         }
     }
 
 
-    override fun getView(): View {
+    override fun getView(): View? {
         return sceneView
     }
 
     override fun dispose() {
-        sceneView.destroy()
+        destroyNativeView()
+        destroySceneView()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "init" -> {
-                result.success(null)
-            }
-            "dispose" -> {
-                sceneView.destroy()
+                sceneView?.resume()
                 result.success(null)
             }
             "remove_widgets" -> {
@@ -68,31 +69,30 @@ internal class FlutterSceneView(
                 }
                 result.success(null)
             }
-            "handle_tap" -> {
-                result.success(null)
-            }
             "add_earth_to_scene" -> {
                 if (earthNode != null) {
                     return
                 }
                 val backgroundColor = call.argument<Number>("backgroundColor")
-                sceneView.background = if (backgroundColor != null) {
-                    ColorDrawable(backgroundColor.toInt())
-                } else {
-                    ColorDrawable(0xffffff)
-                }
-                val scale = call.argument<Double>("initialScale")?.toFloat() ?: 1f
+                sceneView?.apply {
+                    background = if (backgroundColor != null) {
+                        ColorDrawable(backgroundColor.toInt())
+                    } else {
+                        ColorDrawable(0xffffff)
+                    }
+                    val scale = call.argument<Double>("initialScale")?.toFloat() ?: 1f
 
-                val earthNode = EarthNode(context, transformationSystem, scale).apply {
-                    localPosition = Vector3(
-                        call.argument<Double>("x")?.toFloat() ?: 0f,
-                        call.argument<Double>("y")?.toFloat() ?: 0f,
-                        call.argument<Double>("z")?.toFloat() ?: 0f,
+                    val earthNode = EarthNode(context, transformationSystem, scale).apply {
+                        localPosition = Vector3(
+                            call.argument<Double>("x")?.toFloat() ?: 0f,
+                            call.argument<Double>("y")?.toFloat() ?: 0f,
+                            call.argument<Double>("z")?.toFloat() ?: 0f,
 //                        -1f,
-                    )
+                        )
+                    }
+                    scene.addChild(earthNode)
+                    this@FlutterSceneView.earthNode = earthNode
                 }
-                sceneView.scene.addChild(earthNode)
-                this.earthNode = earthNode
                 result.success(null)
             }
             "add_widgets_to_earth" -> {
@@ -161,5 +161,31 @@ internal class FlutterSceneView(
     private fun makeTransformationSystem(): TransformationSystem {
         val selectionVisualizer = FootprintSelectionVisualizer()
         return TransformationSystem(context.resources.displayMetrics, selectionVisualizer)
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        sceneView?.resume()
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        sceneView?.pause()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        destroyNativeView()
+        destroySceneView()
+        EarthNode.renderableCache = null
+    }
+
+    private fun destroyNativeView() {
+        methodChannel.setMethodCallHandler(null)
+        lifecycleProvider.getLifecycle().removeObserver(this)
+    }
+
+    private fun destroySceneView() {
+        earthNode = null
+        sceneView?.pause()
+        sceneView?.destroy()
+        sceneView = null
     }
 }

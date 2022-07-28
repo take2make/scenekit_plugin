@@ -36,6 +36,8 @@ class EarthNode(
         fun getZ(radius: Float, lat: Double, long: Double): Float {
             return (radius * cos(Math.toRadians(lat)) * cos(Math.toRadians(long))).toFloat()
         }
+
+        var renderableCache: ModelRenderable? = null
     }
 
     init {
@@ -53,21 +55,29 @@ class EarthNode(
     }
 
     private fun loadModel() {
+        if (renderableCache != null) {
+            renderable = renderableCache
+            return
+        }
+
 //        1.5227485f
 //        1.7491373716f
+        val modelPath = "new/untitled.gltf"
         ModelRenderable.builder()
             .setSource(
                 context, RenderableSource.builder().setSource(
                     context,
-                    Uri.parse("new/untitled.gltf"),
+                    Uri.parse(modelPath),
                     RenderableSource.SourceType.GLTF2
                 )
                     .setScale(1f)
                     .setRecenterMode(RenderableSource.RecenterMode.CENTER)
                     .build()
             )
+            .setRegistryId(modelPath)
             .build()
             .thenAccept { modelRenderable ->
+                renderableCache = modelRenderable
                 renderable = modelRenderable
                 select()
             }
