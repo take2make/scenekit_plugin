@@ -32,10 +32,6 @@ class ScenekitController {
     return version;
   }
 
-  Future<void> dispose() async {
-    await _channel.invokeMethod("dispose");
-  }
-
   Future<void> removeWidgets() async {
     await _channel.invokeMethod("remove_widgets");
   }
