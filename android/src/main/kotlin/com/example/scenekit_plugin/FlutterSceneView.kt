@@ -28,7 +28,7 @@ internal class FlutterSceneView(
 
     init {
         methodChannel.setMethodCallHandler(this)
-        lifecycleProvider.getLifecycle().addObserver(this)
+        lifecycleProvider.getLifecycle()?.addObserver(this)
 
         sceneView = SceneView(context)
         val scene = sceneView?.scene?.apply {
@@ -172,6 +172,7 @@ internal class FlutterSceneView(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
+        owner.lifecycle.removeObserver(this)
         destroyNativeView()
         destroySceneView()
         EarthNode.renderableCache = null
@@ -179,7 +180,7 @@ internal class FlutterSceneView(
 
     private fun destroyNativeView() {
         methodChannel.setMethodCallHandler(null)
-        lifecycleProvider.getLifecycle().removeObserver(this)
+        lifecycleProvider.getLifecycle()?.removeObserver(this)
     }
 
     private fun destroySceneView() {
