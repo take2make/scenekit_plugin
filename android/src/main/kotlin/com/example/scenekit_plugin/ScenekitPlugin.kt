@@ -24,8 +24,8 @@ class ScenekitPlugin : FlutterPlugin, ActivityAware {
             FlutterScenekitFactory(
                 flutterPluginBinding.binaryMessenger,
                 object : LifecycleProvider {
-                    override fun getLifecycle(): Lifecycle {
-                        return lifecycle!!
+                    override fun getLifecycle(): Lifecycle? {
+                        return lifecycle
                     }
                 }
             )
