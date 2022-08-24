@@ -2,11 +2,12 @@ import UIKit
 import SceneKit
 
 class WidgetNode: SCNNode {
-    var color: UIColor = UIColor.red
-
+    var image: UIImage?
+    
     func initFromParameters(params: Dictionary<String, Any>) {
-        if (params["color"] != nil) {
-            self.color = UIColor.init(rgb: (params["color"] as? Int)!)
+        if ((params["imageData"] as? String)! != "") {
+            let imageData = Data(base64Encoded: (params["imageData"] as? String)!)
+            self.image = UIImage(data: imageData!)
         }
         self.name = (params["key"] as? String)!
     }
@@ -14,15 +15,11 @@ class WidgetNode: SCNNode {
     init(params: Dictionary<String, Any>) {
         super.init()
         self.initFromParameters(params: params)
-        let plane = SCNPlane(width: 0.2, height: 0.2)
-        plane.cornerRadius = 0.05
+        let plane = SCNPlane(width: 0.3, height: 0.3)
         self.geometry = plane
         
-        self.geometry?.firstMaterial?.diffuse.contents = self.color
+        self.geometry?.firstMaterial?.diffuse.contents = self.image
         self.geometry?.firstMaterial?.shininess = 100
-        
-        let imageNode = ImageNode(params: params)
-        self.addChildNode(imageNode)
     }
     
     required init?(coder aDecoder: NSCoder) {

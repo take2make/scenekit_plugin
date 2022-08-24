@@ -14,7 +14,7 @@ class ImageNode: SCNNode {
     init(params: Dictionary<String, Any>) {
         super.init()
         self.initFromParameters(params: params)
-        let plane = SCNPlane(width: 0.1, height: 0.1)
+        let plane = SCNPlane(width: 0.2, height: 0.2)
         self.geometry = plane
         
         self.geometry?.firstMaterial?.diffuse.contents = self.image

@@ -53,3 +53,11 @@
 ## 0.0.12
 
 * fix craching on android
+
+## 0.0.13
+
+* fix craching on android 2
+
+## 0.0.14
+
+* disable zoom for ios and update widget node to show only image

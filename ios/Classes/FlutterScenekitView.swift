@@ -92,6 +92,13 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
             addSymmetricNode(parentNode: self.parentNode!, childNode: EmptyWidgetNode(), coord: Coord.initFromParameters(params: widgetArgument))
         }
     }
+    
+    @objc func pinchGesture(_ sender: UIPinchGestureRecognizer) {
+          if sender.numberOfTouches == 2 {
+              // Disable zoom
+              print("zoom attempted")
+          }
+      }
 
     func initalize(_ arguments: Dictionary<String, Any>, _ result:FlutterResult) {
         let scene = SCNScene()
@@ -112,6 +119,9 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
                 panRecognizer.maximumNumberOfTouches = 1
             }
         }
+        
+        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(pinchGesture))
+        sceneView.addGestureRecognizer(pinchRecognizer)
         
         sceneView.scene = scene
         sceneView.defaultCameraController.maximumVerticalAngle = 45
