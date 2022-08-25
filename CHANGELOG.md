@@ -61,3 +61,7 @@
 ## 0.0.14
 
 * disable zoom for ios and update widget node to show only image
+
+## 0.0.15
+
+* Update android and coordinates for widget on ios
