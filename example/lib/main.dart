@@ -49,7 +49,6 @@ class _ScenekitPageState extends State<ScenekitPage> {
                   lat: 50.83807146055582,
                   long: 156.87842152770136,
                   assetName: 'assets/eagle.png',
-                  color: 0xFFBCD9A5,
                   onWidgetTap: () async {
                     await HapticFeedback.lightImpact();
                     print("navigate to widgetNode1 !");

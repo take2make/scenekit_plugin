@@ -6,7 +6,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
     let channel: FlutterMethodChannel
     var forceTapOnCenter: Bool = false
     var parentNode: SCNNode?
-    var radius: Float = 1.15
+    var radius: Float = 1.12
     
     init(withFrame frame: CGRect, viewIdentifier viewId: Int64, messenger msg: FlutterBinaryMessenger) {
         self.sceneView = SCNView(frame: frame)
@@ -152,7 +152,7 @@ class FlutterScenekitView: NSObject, FlutterPlatformView, SCNSceneRendererDelega
 
         let pi = Float.pi
 
-        childNode.position = SCNVector3(radius*cos(coord.latitude/180*pi)*sin(coord.longitude/180*pi),radius*sin(coord.latitude/180*pi), radius*cos(coord.latitude/180*pi)*cos(coord.longitude/180*pi));
+        childNode.position = SCNVector3(radius*cos(coord.latitude/180*pi+pi/40)*sin(coord.longitude/180*pi),radius*sin(coord.latitude/180*pi+pi/40), radius*cos(coord.latitude/180*pi+pi/40)*cos(coord.longitude/180*pi));
         childNode.constraints = [billboardConstraint]
         parentNode.addChildNode(childNode)
     }
